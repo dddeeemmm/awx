@@ -1,0 +1,6 @@
+---
+
+- include: install.yml
+  when: awx_install
+
+- include: setup.yml

@@ -1,0 +1,18 @@
+---
+
+awx_packages:
+  - git
+  - ansible
+  - docker
+  - docker-compose
+  - docker-logrotate
+awx_services: docker
+awx_pip_modules: docker-compose==1.9.0
+awx_repo: https://github.com/ansible/awx.git
+awx_config:
+  - { regexp: 'postgres_data_dir="~/.awx/pgdocker"',    replace: 'postgres_data_dir="{{ awx_dir }}/pgdocker"'    }
+  - { regexp: 'docker_compose_dir="~/.awx/awxcompose"', replace: 'docker_compose_dir="{{ awx_dir }}/awxcompose"' }
+  - { regexp: 'secret_key=awxsecret',                   replace: 'secret_key={{ awx_secret_key }}'               }
+  - { regexp: 'pg_password=awxpass',                    replace: 'pg_password={{ awx_pg_password }}'             }
+  - { regexp: 'admin_password=password',                replace: 'admin_password={{ awx_admin_password }}'       }
+

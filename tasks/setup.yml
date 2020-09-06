@@ -1,0 +1,42 @@
+---
+
+- name: clone awx_repo
+  git:
+    repo: '{{ awx_repo }}'
+    dest: '{{ awx_dir }}/repo'
+    clone: true
+    force: '{{ awx_update }}'
+  ignore_errors: true
+
+
+- block:
+
+    - name: generate secret key
+      set_fact:
+        awx_secret_key: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters,digits,hexdigits') }}"
+      when: awx_secret_key is not defined or awx_secret_key == ''
+
+    - name: generate awx_pg_password
+      set_fact:
+        awx_pg_password: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters,digits,hexdigits') }}"
+      when: awx_pg_password is not defined or awx_pg_password == ''
+
+    - name: generate awx_admin_password
+      set_fact:
+        awx_admin_password: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters,digits,hexdigits') }}"
+      when: awx_admin_password is not defined or awx_admin_password == ''
+
+    - name: setup config
+      replace:
+        path: '{{ awx_dir }}/repo/installer/inventory'
+        regexp: '{{ item.regexp }}'
+        replace: '{{ item.replace }}'
+      with_items: '{{ awx_config }}'
+
+  no_log: '{{ nolog }}'
+
+
+- name: install awx in docker compose
+  command: ansible-playbook install.yml -i inventory
+  args:
+    chdir: '{{ awx_dir }}/repo/installer'

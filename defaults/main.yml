@@ -1,0 +1,11 @@
+---
+
+awx_install: true
+awx_dir: /opt/awx
+awx_update: false
+
+awx_pg_password: changeme
+awx_admin_password: password
+awx_secret_key: awxsecretkey
+
+nolog: true
